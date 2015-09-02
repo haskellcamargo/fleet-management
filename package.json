@@ -23,6 +23,7 @@
     "url": "https://github.com/haskellcamargo/fleet-management/"
   },
   "devDependencies": {
-    "typescript": "~1.0"
+    "typescript": "~1.0",
+    "less": "~2.5"
   }
 }

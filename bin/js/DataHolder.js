@@ -37,6 +37,7 @@ var FleetManagement;
         DataHolder.prototype.addVehicle = function (vehicle) {
             try  {
                 this.validateVehicle(vehicle);
+                this.plateList.push(vehicle.plate);
                 this.vehicles.push(vehicle);
             } catch (e) {
                 console.log(e);
@@ -47,9 +48,61 @@ var FleetManagement;
         * Finds a vehicle by its plate.
         * @author Marcelo Camargo
         * @param plate: string
-        * @return Maybe<IVehicle>
+        * @return IVehicle
         */
         DataHolder.prototype.getVehicleByPlate = function (plate) {
+            if (this.plateList.indexOf(plate) === -1) {
+                return null;
+            }
+
+            for (var i = 0, len = this.vehicles.length; i < len; i++) {
+                if (this.vehicles[i].plate === plate) {
+                    return this.vehicles[i];
+                }
+            }
+            return null;
+        };
+
+        /**
+        * Removes a vehicle by plate.
+        * @author Marcelo Camargo
+        * @param plate: string
+        * @return void
+        */
+        DataHolder.prototype.removeVehicleByPlate = function (plate) {
+            if (this.plateList.indexOf(plate) === -1) {
+                return;
+            }
+
+            for (var i = 0, len = this.vehicles.length; i < len; i++) {
+                if (this.vehicles[i].plate === plate) {
+                    this.vehicles.splice(i, 1);
+                    var plateIndex = this.plateList.indexOf(this.vehicles[i].plate);
+                    this.plateList.splice(plateIndex, 1);
+                }
+            }
+        };
+
+        /**
+        * Updates data of a vehicle by plate.
+        * @author Marcelo Camargo
+        * @param plate: string
+        * @return void
+        */
+        DataHolder.prototype.updateVehicleByPlate = function (plate, newData) {
+            var vehicle = this.getVehicleByPlate(plate);
+            if (vehicle !== null && newData) {
+                try  {
+                    this.validateVehicle(newData, false);
+                    vehicle.fuel = newData.fuel;
+                    vehicle.image = newData.image ? newData.image : null;
+                    vehicle.model = newData.model;
+                    vehicle.plate = newData.plate;
+                    vehicle.trademark = newData.trademark;
+                } catch (e) {
+                    console.log(e);
+                }
+            }
         };
 
         /**
@@ -59,8 +112,9 @@ var FleetManagement;
         * @throws Error
         * @return void
         */
-        DataHolder.prototype.validateVehicle = function (vehicle) {
-            if (this.plateList.indexOf(vehicle.plate)) {
+        DataHolder.prototype.validateVehicle = function (vehicle, validatePlate) {
+            if (typeof validatePlate === "undefined") { validatePlate = true; }
+            if (validatePlate && this.plateList.indexOf(vehicle.plate)) {
                 throw new Error("There is already a vehicle with the same plate");
             }
 
