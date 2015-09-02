@@ -1,0 +1,28 @@
+{
+  "name": "fleet-control",
+  "version": "0.1.0",
+  "description": "A simple fleet control management tool",
+  "keywords": ["fleet", "vehicle", "enterprise", "management"],
+  "bugs": {
+    "url": "https://github.com/haskellcamargo/fleet-management/issues",
+    "email": "marcelocamargo@linuxmail.org"
+  },
+  "license": {
+    "type": "GNU GPL v3",
+    "url": "http://www.gnu.org/licenses/gpl-3.0.en.html"
+  },
+  "author": {
+    "name": "Marcelo Camargo",
+    "email": "marcelocamargo@linuxmail.org",
+    "url": "https://haskellcamargo.github.io/"
+  },
+  "files": ["bin", "lib"],
+  "main": "fleet-control",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/haskellcamargo/fleet-management/"
+  },
+  "devDependencies": {
+    "typescript": "~1.0"
+  }
+}
