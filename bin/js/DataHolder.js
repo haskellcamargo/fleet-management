@@ -94,28 +94,6 @@ var FleetManagement;
         };
 
         /**
-        * Updates data of a vehicle by plate.
-        * @author Marcelo Camargo
-        * @param plate: string
-        * @return void
-        */
-        DataHolder.prototype.updateVehicleByPlate = function (plate, newData) {
-            var vehicle = this.getVehicleByPlate(plate);
-            if (vehicle !== null && newData) {
-                try  {
-                    this.validateVehicle(newData, false);
-                    vehicle.fuel = newData.fuel;
-                    vehicle.image = newData.image ? newData.image : null;
-                    vehicle.model = newData.model;
-                    vehicle.plate = newData.plate;
-                    vehicle.trademark = newData.trademark;
-                } catch (e) {
-                    console.log(e);
-                }
-            }
-        };
-
-        /**
         * A serie of validations to check for format errors.
         * @author Marcelo Camargo
         * @since 2015/09/02

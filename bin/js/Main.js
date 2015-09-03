@@ -1,4 +1,5 @@
 /// <reference path="DataHolder" />
+/// <reference path="IField" />
 /**
 * @module FleetManagement
 */
@@ -33,9 +34,10 @@ var FleetManagement;
                         return Main.getFuelName(vehicle.fuel).toLowerCase().indexOf(content) !== -1 || vehicle.model.toLowerCase().indexOf(content) !== -1 || vehicle.plate.toLowerCase().indexOf(content) !== -1 || vehicle.trademark.toLowerCase().indexOf(content) !== -1;
                     });
                     _this.render(holder, (_this.page * 5) - 5, data);
+                } else {
+                    _this.render(holder, (_this.page * 5) - 5);
                 }
             };
-            this.render(holder, (this.page * 5) - 5);
         };
 
         /**
@@ -76,6 +78,7 @@ var FleetManagement;
         * @return HTMLTableDataCellElement
         */
         Main.renderEditButton = function (vehicle, holder) {
+            var _this = this;
             var td = document.createElement("td");
 
             var button = document.createElement("button");
@@ -84,11 +87,148 @@ var FleetManagement;
             button.className = "btn btn-info";
 
             button.onclick = function () {
+                _this.onEdit(td.parentNode, vehicle, holder);
             };
 
             td.appendChild(button);
 
             return td;
+        };
+
+        /**
+        * Opens a row to edition.
+        * @author Marcelo Camargo
+        * @param line: HTMLTableRowElement
+        * @param vehicle: IVehicle
+        * @param holder: DataHolder
+        * @return void
+        */
+        Main.onEdit = function (line, vehicle, holder) {
+            var _this = this;
+            // Fuel
+            var currentFuel = line.children[2].innerHTML;
+            var fuelField = document.createElement("select");
+            ["Flex", "Alcohol", "Gas"].forEach(function (fuel) {
+                fuelField.appendChild((function () {
+                    var option = document.createElement("option");
+                    option.value = fuel;
+                    option.innerHTML = fuel;
+                    if (fuel === currentFuel) {
+                        option.selected = true;
+                    }
+                    return option;
+                })());
+            });
+
+            fuelField.className = "form-control";
+
+            // Model
+            var currentModel = line.children[3].innerHTML;
+            var modelField = document.createElement("input");
+            modelField.type = "text";
+            modelField.value = currentModel;
+            modelField.required = true;
+            modelField.className = "form-control";
+
+            // Trademark
+            var currentTrademark = line.children[4].innerHTML;
+            var trademarkField = document.createElement("select");
+            ["Volkswagen", "Ford", "Fiat"].forEach(function (trademark) {
+                trademarkField.appendChild((function () {
+                    var option = document.createElement("option");
+                    option.value = trademark;
+                    option.innerHTML = trademark;
+                    if (trademark === currentFuel) {
+                        option.selected = true;
+                    }
+                    return option;
+                })());
+            });
+
+            trademarkField.className = "form-control";
+
+            line.children[2].innerHTML = "";
+            line.children[3].innerHTML = "";
+            line.children[4].innerHTML = "";
+            line.children[2].appendChild(fuelField);
+            line.children[3].appendChild(modelField);
+            line.children[4].appendChild(trademarkField);
+
+            // Transform buttons
+            var confirmButton = line.children[5].firstChild;
+            confirmButton.innerHTML = "Confirm";
+            confirmButton.className = "btn btn-success";
+            confirmButton.onclick = function () {
+                _this.onConfirmEdit(line, vehicle, holder, {
+                    fuel: (function () {
+                        switch (fuelField.value) {
+                            case "Gas":
+                                return 0 /* Gas */;
+                            case "Alcohol":
+                                return 1 /* Alcohol */;
+                            default:
+                                return 2 /* Flex */;
+                        }
+                    })(),
+                    model: modelField.value,
+                    trademark: trademarkField.value
+                });
+            };
+
+            var cancelButton = line.children[6].firstChild;
+            cancelButton.innerHTML = "Cancel";
+            cancelButton.onclick = function () {
+                _this.onCancelEdit(line, vehicle, holder);
+            };
+        };
+
+        /**
+        * When cancel button is pressed while in edition mode.
+        * @author Marcelo Camargo
+        * @param line: HTMLTableRowElement
+        * @param vehicle: IVehicle
+        * @param holder: DataHolder
+        * @return void
+        */
+        Main.onCancelEdit = function (line, vehicle, holder) {
+            line.children[2].innerHTML = this.getFuelName(vehicle.fuel);
+            line.children[3].innerHTML = vehicle.model;
+            line.children[4].innerHTML = vehicle.trademark;
+
+            // Restore buttons
+            line.removeChild(line.lastChild);
+            line.removeChild(line.lastChild);
+
+            line.appendChild(this.renderEditButton(vehicle, holder));
+            line.appendChild(this.renderDeleteButton(vehicle, holder));
+        };
+
+        /**
+        * When the user confirms the edition
+        * @author Marcelo Camargo
+        * @param line: HTMLTableRowElement
+        * @param vehicle: IVehicle
+        * @param holder: DataHolder
+        * @param newData: IField
+        * @return void
+        */
+        Main.onConfirmEdit = function (line, vehicle, holder, newData) {
+            vehicle.fuel = newData.fuel;
+            vehicle.model = newData.model;
+            vehicle.trademark = newData.trademark;
+            vehicle.image = this.placeholder[newData.trademark.toLowerCase()];
+
+            line.children[0].firstChild.src = vehicle.image;
+            line.children[2].innerHTML = this.getFuelName(vehicle.fuel);
+            line.children[3].innerHTML = vehicle.model;
+            line.children[4].innerHTML = vehicle.trademark;
+
+            // Restore buttons
+            line.removeChild(line.lastChild);
+            line.removeChild(line.lastChild);
+
+            line.appendChild(this.renderEditButton(vehicle, holder));
+            line.appendChild(this.renderDeleteButton(vehicle, holder));
         };
 
         /**
@@ -183,8 +323,8 @@ var FleetManagement;
         Main.search = document.getElementById("search");
         Main.placeholder = {
             volkswagen: "http://img1.wikia.nocookie.net/__cb20131206125409/logopedia/images/9/9f/Volkswagen56.png",
-            ford: "",
-            fiat: ""
+            ford: "http://seeklogo.com/images/F/Ford-logo-FAE532D2CC-seeklogo.com.gif",
+            fiat: "http://s3.caradvice.com.au/wp-content/themes/caradvice/assets/img/showroom/fiat.png"
         };
         Main.page = 1;
         return Main;

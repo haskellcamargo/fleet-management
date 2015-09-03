@@ -2,9 +2,8 @@ body {
   background-color: gainsboro;
   font-family: "open sans", "segoe ui";
 }
-body .img-logo {
-  margin-top: 20px;
-  margin-bottom: 20px;
+body .search-area {
+  margin-top: 50px;
 }
 body .heart {
   color: #E74C3C;

@@ -1,4 +1,5 @@
 /// <reference path="DataHolder" />
+/// <reference path="IField" />
 
 /**
  * @module FleetManagement
@@ -11,8 +12,8 @@ module FleetManagement {
       <HTMLInputElement>document.getElementById("search");
     static placeholder: Object = {
       volkswagen: "http://img1.wikia.nocookie.net/__cb20131206125409/logopedia/images/9/9f/Volkswagen56.png",
-      ford: "",
-      fiat: ""
+      ford: "http://seeklogo.com/images/F/Ford-logo-FAE532D2CC-seeklogo.com.gif",
+      fiat: "http://s3.caradvice.com.au/wp-content/themes/caradvice/assets/img/showroom/fiat.png"
     };
     static page: number = 1;
 
@@ -44,9 +45,10 @@ module FleetManagement {
               || vehicle.trademark.toLowerCase().indexOf(content) !== -1;
           });
           this.render(holder, (this.page * 5) - 5, data);
+        } else {
+          this.render(holder, (this.page * 5) - 5);
         }
       };
-      this.render(holder, (this.page * 5) - 5);
     }
 
     /**
@@ -105,12 +107,163 @@ module FleetManagement {
       button.className = "btn btn-info";
 
       button.onclick = () => {
-
+        this.onEdit(<HTMLTableRowElement>td.parentNode, vehicle, holder);
       };
 
       td.appendChild(button);
 
       return td;
+    }
+
+    /**
+     * Opens a row to edition.
+     * @author Marcelo Camargo
+     * @param line: HTMLTableRowElement
+     * @param vehicle: IVehicle
+     * @param holder: DataHolder
+     * @return void
+     */
+    public static onEdit(
+      line: HTMLTableRowElement,
+      vehicle: IVehicle,
+      holder: DataHolder): void {
+      // Fuel
+      var currentFuel: string = (<HTMLTableDataCellElement>line.children[2]).innerHTML;
+      var fuelField: HTMLSelectElement = document.createElement("select");
+      ["Flex", "Alcohol", "Gas"].forEach((fuel: string) => {
+        fuelField.appendChild((() => {
+          var option: HTMLOptionElement =
+            <HTMLOptionElement>document.createElement("option");
+          option.value = fuel;
+          option.innerHTML = fuel;
+          if (fuel === currentFuel) {
+            option.selected = true;
+          }
+          return option;
+        })());
+      });
+
+      fuelField.className = "form-control";
+
+      // Model
+      var currentModel: string = (<HTMLTableDataCellElement>line.children[3]).innerHTML;
+      var modelField: HTMLInputElement = document.createElement("input");
+      modelField.type = "text";
+      modelField.value = currentModel;
+      modelField.required = true;
+      modelField.className = "form-control";
+
+      // Trademark
+      var currentTrademark: string = (<HTMLTableDataCellElement>line.children[4]).innerHTML;
+      var trademarkField: HTMLSelectElement = document.createElement("select");
+      ["Volkswagen", "Ford", "Fiat"].forEach((trademark: string) => {
+        trademarkField.appendChild((() => {
+          var option: HTMLOptionElement =
+            <HTMLOptionElement>document.createElement("option");
+          option.value = trademark;
+          option.innerHTML = trademark;
+          if (trademark === currentFuel) {
+            option.selected = true;
+          }
+          return option;
+        })());
+      });
+
+      trademarkField.className = "form-control";
+
+      (<HTMLTableDataCellElement>line.children[2]).innerHTML = "";
+      (<HTMLTableDataCellElement>line.children[3]).innerHTML = "";
+      (<HTMLTableDataCellElement>line.children[4]).innerHTML = "";
+      (<HTMLTableDataCellElement>line.children[2]).appendChild(fuelField);
+      (<HTMLTableDataCellElement>line.children[3]).appendChild(modelField);
+      (<HTMLTableDataCellElement>line.children[4]).appendChild(trademarkField);
+
+      // Transform buttons
+      var confirmButton: HTMLButtonElement =
+        <HTMLButtonElement>line.children[5].firstChild;
+      confirmButton.innerHTML = "Confirm";
+      confirmButton.className = "btn btn-success";
+      confirmButton.onclick = () => {
+        this.onConfirmEdit(line, vehicle, holder, {
+          fuel: (() => {
+            switch (fuelField.value) {
+              case "Gas":
+                return Fuel.Gas;
+              case "Alcohol":
+                return Fuel.Alcohol;
+              default:
+                return Fuel.Flex;
+            }
+          })(),
+          model: modelField.value,
+          trademark: trademarkField.value
+        });
+      }
+
+      var cancelButton: HTMLButtonElement =
+        <HTMLButtonElement>line.children[6].firstChild;
+      cancelButton.innerHTML = "Cancel";
+      cancelButton.onclick = () => {
+        this.onCancelEdit(line, vehicle, holder);
+      }
+    }
+
+    /**
+     * When cancel button is pressed while in edition mode.
+     * @author Marcelo Camargo
+     * @param line: HTMLTableRowElement
+     * @param vehicle: IVehicle
+     * @param holder: DataHolder
+     * @return void
+     */
+    public static onCancelEdit(
+      line: HTMLTableRowElement,
+      vehicle: IVehicle,
+      holder: DataHolder
+    ): void {
+      (<HTMLTableDataCellElement>line.children[2]).innerHTML = this.getFuelName(vehicle.fuel);
+      (<HTMLTableDataCellElement>line.children[3]).innerHTML = vehicle.model;
+      (<HTMLTableDataCellElement>line.children[4]).innerHTML = vehicle.trademark;
+
+      // Restore buttons
+      line.removeChild(line.lastChild);
+      line.removeChild(line.lastChild);
+
+      line.appendChild(this.renderEditButton(vehicle, holder));
+      line.appendChild(this.renderDeleteButton(vehicle, holder));
+    }
+
+    /**
+     * When the user confirms the edition
+     * @author Marcelo Camargo
+     * @param line: HTMLTableRowElement
+     * @param vehicle: IVehicle
+     * @param holder: DataHolder
+     * @param newData: IField
+     * @return void
+     */
+    public static onConfirmEdit(
+      line: HTMLTableRowElement,
+      vehicle: IVehicle,
+      holder: DataHolder,
+      newData: IField
+    ): void {
+      vehicle.fuel = newData.fuel;
+      vehicle.model = newData.model;
+      vehicle.trademark = newData.trademark;
+      vehicle.image = this.placeholder[newData.trademark.toLowerCase()];
+
+      (<HTMLImageElement>(<HTMLTableDataCellElement>line.children[0]).firstChild).src = vehicle.image;
+      (<HTMLTableDataCellElement>line.children[2]).innerHTML = this.getFuelName(vehicle.fuel);
+      (<HTMLTableDataCellElement>line.children[3]).innerHTML = vehicle.model;
+      (<HTMLTableDataCellElement>line.children[4]).innerHTML = vehicle.trademark;
+
+      // Restore buttons
+      line.removeChild(line.lastChild);
+      line.removeChild(line.lastChild);
+
+      line.appendChild(this.renderEditButton(vehicle, holder));
+      line.appendChild(this.renderDeleteButton(vehicle, holder));
     }
 
     /**
