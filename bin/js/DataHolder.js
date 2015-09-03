@@ -27,6 +27,15 @@ var FleetManagement;
             this.setInitialData();
         }
         /**
+        * Returns the list of vehicles.
+        * @author Marcelo Camargo
+        * @return Array<IVehicle>
+        */
+        DataHolder.prototype.getVehicles = function () {
+            return this.vehicles;
+        };
+
+        /**
         * Adds a vehicle to the vehicles list. Returns true wheter the vehicle
         * has been inserted or false if the vehicle cannot be inserted because
         * of a repeated plate.
@@ -71,14 +80,15 @@ var FleetManagement;
         */
         DataHolder.prototype.removeVehicleByPlate = function (plate) {
             if (this.plateList.indexOf(plate) === -1) {
+                console.log("Placa inexistente");
                 return;
             }
 
             for (var i = 0, len = this.vehicles.length; i < len; i++) {
                 if (this.vehicles[i].plate === plate) {
                     this.vehicles.splice(i, 1);
-                    var plateIndex = this.plateList.indexOf(this.vehicles[i].plate);
-                    this.plateList.splice(plateIndex, 1);
+                    this.plateList.splice(this.plateList.indexOf(plate), 1);
+                    return;
                 }
             }
         };
@@ -153,14 +163,15 @@ var FleetManagement;
                     plate: "FOX-4125"
                 }, {
                     fuel: 1 /* Alcohol */,
-                    image: [
-                        "https://lh4.googleusercontent.com/­_AhcQKHf7rM/AAAAAAAAAAI/",
-                        "AAAAAAAAAAA/QM­pqL4NYaE/s48­c­k­no/photo.jpg"
-                    ].join(""),
+                    image: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fusca_1500.jpg",
                     trademark: "Volkswagen",
                     model: "Fusca",
                     plate: "PAI-4121"
                 }];
+
+            this.plateList = [
+                "FFF-5498", "FOX-4125", "PAI-4121"
+            ];
         };
         return DataHolder;
     })();

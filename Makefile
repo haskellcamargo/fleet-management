@@ -10,6 +10,7 @@ FLEET = FleetManagement
 compile:
 	lessc $(GUI)/main.less > $(BIN)/css/main.css
 
+	tsc $(SRC)/$(FLEET)/Main.ts --outDir $(BIN)/js
 	tsc $(SRC)/$(FLEET)/DataHolder.ts --outDir $(BIN)/js
 	tsc $(SRC)/$(FLEET)/Vehicle.ts --outDir $(BIN)/js
 

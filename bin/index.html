@@ -18,8 +18,37 @@
     <title>Fleet Management</title>
   </head>
   <body>
-    <div class="col-xs-12">
+    <div class="container">
+      <div class="row vertical-center-row">
+        <div class="col-lg-12">
+          <div class="row ">
+            <div align="center">
+              <img class="img-responsive img-logo" src="./favicon.ico" draggable="false" />
+            </div>
 
+            <div class="search-area">
+              <input class="form-control" id="search" placeholder="Search" />
+            </div>
+
+            <div>
+              <table id="dataset">
+
+              </table>
+            </div>
+
+            <div class="footer" align="center">
+              Made with <span class="glyphicon glyphicon-heart heart"></span> by <a href="https://github.com/haskellcamargo/">Haskell Camargo</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
+  <script type="text/javascript" src="js/DataHolder.js"></script>
+  <script type="text/javascript" src="js/Fuel.js"></script>
+  <script type="text/javascript" src="js/Vehicle.js"></script>
+  <script type="text/javascript" src="js/Main.js"></script>
+  <script type="text/javascript">
+    FleetManagement.Main.init();
+  </script>
 </html>

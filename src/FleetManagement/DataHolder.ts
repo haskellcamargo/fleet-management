@@ -29,6 +29,15 @@ module FleetManagement {
     }
 
     /**
+     * Returns the list of vehicles.
+     * @author Marcelo Camargo
+     * @return Array<IVehicle>
+     */
+    public getVehicles(): Array<IVehicle> {
+      return this.vehicles;
+    }
+
+    /**
      * Adds a vehicle to the vehicles list. Returns true wheter the vehicle
      * has been inserted or false if the vehicle cannot be inserted because
      * of a repeated plate.
@@ -73,19 +82,17 @@ module FleetManagement {
      * @param plate: string
      * @return void
      */
-    private removeVehicleByPlate(plate: string): void {
+    public removeVehicleByPlate(plate: string): void {
       if (this.plateList.indexOf(plate) === -1) {
+        console.log("Placa inexistente");
         return;
       }
 
-      for (var i: number = 0, len: number = this.vehicles.length;
-        i < len;
-        i++) {
+      for (var i: number = 0, len: number = this.vehicles.length; i < len; i++) {
         if (this.vehicles[i].plate === plate) {
           this.vehicles.splice(i, 1);
-          var plateIndex: number =
-            this.plateList.indexOf(this.vehicles[i].plate);
-          this.plateList.splice(plateIndex, 1);
+          this.plateList.splice(this.plateList.indexOf(plate), 1);
+          return;
         }
       }
     }
@@ -161,14 +168,15 @@ module FleetManagement {
         plate: "FOX-4125"
       }, {
         fuel: Fuel.Alcohol,
-        image: [
-          "https://lh4.googleusercontent.com/­_AhcQKHf7rM/AAAAAAAAAAI/",
-          "AAAAAAAAAAA/QM­pqL4NYaE/s48­c­k­no/photo.jpg"
-        ].join(""),
+        image: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fusca_1500.jpg",
         trademark: "Volkswagen",
         model: "Fusca",
         plate: "PAI-4121"
       }];
+
+      this.plateList = [
+        "FFF-5498", "FOX-4125", "PAI-4121"
+      ];
     }
   }
 }

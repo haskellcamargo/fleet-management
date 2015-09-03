@@ -1,3 +1,22 @@
 body {
   background-color: gainsboro;
+  font-family: "open sans", "segoe ui";
+}
+body .img-logo {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+body .heart {
+  color: #E74C3C;
+}
+body a {
+  color: #22A7F0;
+}
+body #dataset {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 95%;
+}
+body #dataset tr {
+  border: 1px solid black;
 }
