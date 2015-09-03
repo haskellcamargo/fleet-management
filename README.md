@@ -1,9 +1,20 @@
-# TODO
+## Requirements
 
-## GUI
+- Node.js
+- GNUMake
 
-- Delete [100%]
-- Inline Edition [0%]
-- Creation [0%]
-- Pagination [20%]
-- Search [20%]
+## Libraries
+
+- jQuery
+- Bootstrap
+
+## Installation
+
+- `git clone https://github.com/haskellcamargo/fleet-management.git`
+- `cd fleet-management`
+- `make install`
+- `make compile`
+
+## Running
+
+Open `bin/index.html`
