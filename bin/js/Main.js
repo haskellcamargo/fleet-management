@@ -15,6 +15,27 @@ var FleetManagement;
         Main.init = function () {
             var holder = new FleetManagement.DataHolder;
             this.render(holder);
+            this.bindSearch(holder);
+        };
+
+        /**
+        * Binds the search event.
+        * @author Marcelo Camargo
+        * @param holder: DataHolder
+        * @return void
+        */
+        Main.bindSearch = function (holder) {
+            var _this = this;
+            this.search.onkeyup = function () {
+                var content = _this.search.value.toLowerCase().trim();
+                if (content !== "") {
+                    var data = holder.getVehicles().filter(function (vehicle) {
+                        return Main.getFuelName(vehicle.fuel).toLowerCase().indexOf(content) !== -1 || vehicle.model.toLowerCase().indexOf(content) !== -1 || vehicle.plate.toLowerCase().indexOf(content) !== -1 || vehicle.trademark.toLowerCase().indexOf(content) !== -1;
+                    });
+                    _this.render(holder, (_this.page * 5) - 5, data);
+                }
+            };
+            this.render(holder, (this.page * 5) - 5);
         };
 
         /**
@@ -22,12 +43,13 @@ var FleetManagement;
         * @author Marcelo Camargo
         * @param holder: DataHolder
         * @param from: number
+        * @param searchData: Array<IVehicle>
         * @return void
         */
-        Main.render = function (holder, from) {
+        Main.render = function (holder, from, searchData) {
             var _this = this;
             if (typeof from === "undefined") { from = 0; }
-            var data = holder.getVehicles().slice(from, from + 5);
+            var data = searchData ? searchData : holder.getVehicles().slice(from, from + 5);
 
             this.dataset.innerHTML = "";
 
@@ -158,6 +180,7 @@ var FleetManagement;
             return "resource/no-image.jpg";
         };
         Main.dataset = document.getElementById("dataset");
+        Main.search = document.getElementById("search");
         Main.placeholder = {
             volkswagen: "http://img1.wikia.nocookie.net/__cb20131206125409/logopedia/images/9/9f/Volkswagen56.png",
             ford: "",

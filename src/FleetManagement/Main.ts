@@ -6,7 +6,9 @@
 module FleetManagement {
   export class Main {
     static dataset: HTMLDivElement =
-        <HTMLDivElement>document.getElementById("dataset");
+      <HTMLDivElement>document.getElementById("dataset");
+    static search: HTMLInputElement =
+      <HTMLInputElement>document.getElementById("search");
     static placeholder: Object = {
       volkswagen: "http://img1.wikia.nocookie.net/__cb20131206125409/logopedia/images/9/9f/Volkswagen56.png",
       ford: "",
@@ -22,6 +24,29 @@ module FleetManagement {
     public static init(): void {
       var holder: DataHolder = new DataHolder;
       this.render(holder);
+      this.bindSearch(holder);
+    }
+
+    /**
+     * Binds the search event.
+     * @author Marcelo Camargo
+     * @param holder: DataHolder
+     * @return void
+     */
+    public static bindSearch(holder: DataHolder): void {
+      this.search.onkeyup = () => {
+        var content: string = this.search.value.toLowerCase().trim();
+        if (content !== "") {
+          var data = holder.getVehicles().filter((vehicle: IVehicle) => {
+            return Main.getFuelName(vehicle.fuel).toLowerCase().indexOf(content) !== -1
+              || vehicle.model.toLowerCase().indexOf(content) !== -1
+              || vehicle.plate.toLowerCase().indexOf(content) !== -1
+              || vehicle.trademark.toLowerCase().indexOf(content) !== -1;
+          });
+          this.render(holder, (this.page * 5) - 5, data);
+        }
+      };
+      this.render(holder, (this.page * 5) - 5);
     }
 
     /**
@@ -29,10 +54,17 @@ module FleetManagement {
      * @author Marcelo Camargo
      * @param holder: DataHolder
      * @param from: number
+     * @param searchData: Array<IVehicle>
      * @return void
      */
-    public static render(holder: DataHolder, from: number = 0): void {
-      var data: Array<IVehicle> = holder.getVehicles().slice(from, from + 5);
+    public static render(
+      holder: DataHolder,
+      from: number = 0,
+      searchData?: Array<IVehicle>
+    ): void {
+      var data: Array<IVehicle> = searchData
+        ? searchData
+        : holder.getVehicles().slice(from, from + 5);
 
       this.dataset.innerHTML = "";
 
