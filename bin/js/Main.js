@@ -81,6 +81,15 @@ var FleetManagement;
 
             this.dataset.innerHTML = "";
 
+            var header = document.createElement("tr");
+
+            ["Image", "Plate", "Fuel", "Model", "Trademark", "Edit", "Delete"].forEach(function (td) {
+                var elem = _this.td(td);
+                elem.align = "center";
+                header.appendChild(elem);
+            });
+
+            this.dataset.appendChild(header);
             data.forEach(function (vehicle) {
                 var line = document.createElement("tr");
 

@@ -100,6 +100,16 @@ module FleetManagement {
 
       this.dataset.innerHTML = "";
 
+      var header: HTMLTableRowElement = document.createElement("tr");
+
+      ["Image", "Plate", "Fuel", "Model", "Trademark", "Edit", "Delete"]
+        .forEach((td: string) => {
+          var elem: HTMLTableDataCellElement = this.td(td);
+          elem.align = "center";
+          header.appendChild(elem);
+        })
+
+      this.dataset.appendChild(header);
       data.forEach((vehicle: IVehicle) => {
         var line: HTMLTableRowElement =
           <HTMLTableRowElement>document.createElement("tr");
