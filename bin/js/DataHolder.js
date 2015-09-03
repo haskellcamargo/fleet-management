@@ -27,6 +27,14 @@ var FleetManagement;
             this.setInitialData();
         }
         /**
+        * Gives the size of the vehicles list
+        * @return number
+        */
+        DataHolder.prototype.getSize = function () {
+            return this.vehicles.length;
+        };
+
+        /**
         * Returns the list of vehicles.
         * @author Marcelo Camargo
         * @return Array<IVehicle>

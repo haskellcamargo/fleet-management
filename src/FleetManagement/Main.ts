@@ -10,6 +10,8 @@ module FleetManagement {
       <HTMLDivElement>document.getElementById("dataset");
     static search: HTMLInputElement =
       <HTMLInputElement>document.getElementById("search");
+    static paginator: HTMLDivElement =
+      <HTMLDivElement>document.getElementById("paginator");
     static placeholder: Object = {
       volkswagen: "http://img1.wikia.nocookie.net/__cb20131206125409/logopedia/images/9/9f/Volkswagen56.png",
       ford: "http://seeklogo.com/images/F/Ford-logo-FAE532D2CC-seeklogo.com.gif",
@@ -26,6 +28,32 @@ module FleetManagement {
       var holder: DataHolder = new DataHolder;
       this.render(holder);
       this.bindSearch(holder);
+      this.renderPaginator(holder);
+    }
+
+    /**
+     * Renders the paginator, with a limit of 5 elements.
+     * @author Marcelo Camargo
+     * @param holder: DataHolder
+     * @return void
+     */
+    public static renderPaginator(holder: DataHolder): void {
+      var pagesNumber: number = holder.getSize();
+      pagesNumber = pagesNumber % 5 === 0
+        ? pagesNumber / 5
+        : parseInt((pagesNumber / 5).toString()) + 1;
+
+      this.paginator.innerHTML = "";
+      for (var i: number = 0; i < pagesNumber; i++) {
+        var pager: HTMLButtonElement =
+          <HTMLButtonElement>document.createElement("button");
+        pager.className = "btn btn-default"
+        pager.innerHTML = (i + 1).toString();
+        pager.onclick = () => {
+          this.render(holder, (i * 5) - 5);
+        };
+        this.paginator.appendChild(pager);
+      }
     }
 
     /**
@@ -45,8 +73,10 @@ module FleetManagement {
               || vehicle.trademark.toLowerCase().indexOf(content) !== -1;
           });
           this.render(holder, (this.page * 5) - 5, data);
+          this.paginator.style.visibility = "hidden";
         } else {
           this.render(holder, (this.page * 5) - 5);
+          this.paginator.style.visibility = "visible";
         }
       };
     }
@@ -277,8 +307,8 @@ module FleetManagement {
       vehicle: IVehicle,
       holder: DataHolder
     ): HTMLTableCellElement {
-      var td: HTMLTableCellElement
-        = <HTMLTableCellElement>document.createElement("td");
+      var td: HTMLTableCellElement =
+        <HTMLTableCellElement>document.createElement("td");
 
       var button: HTMLButtonElement =
         <HTMLButtonElement>document.createElement("button");

@@ -17,6 +17,30 @@ var FleetManagement;
             var holder = new FleetManagement.DataHolder;
             this.render(holder);
             this.bindSearch(holder);
+            this.renderPaginator(holder);
+        };
+
+        /**
+        * Renders the paginator, with a limit of 5 elements.
+        * @author Marcelo Camargo
+        * @param holder: DataHolder
+        * @return void
+        */
+        Main.renderPaginator = function (holder) {
+            var _this = this;
+            var pagesNumber = holder.getSize();
+            pagesNumber = pagesNumber % 5 === 0 ? pagesNumber / 5 : parseInt((pagesNumber / 5).toString()) + 1;
+
+            this.paginator.innerHTML = "";
+            for (var i = 0; i < pagesNumber; i++) {
+                var pager = document.createElement("button");
+                pager.className = "btn btn-default";
+                pager.innerHTML = (i + 1).toString();
+                pager.onclick = function () {
+                    _this.render(holder, (i * 5) - 5);
+                };
+                this.paginator.appendChild(pager);
+            }
         };
 
         /**
@@ -34,8 +58,10 @@ var FleetManagement;
                         return Main.getFuelName(vehicle.fuel).toLowerCase().indexOf(content) !== -1 || vehicle.model.toLowerCase().indexOf(content) !== -1 || vehicle.plate.toLowerCase().indexOf(content) !== -1 || vehicle.trademark.toLowerCase().indexOf(content) !== -1;
                     });
                     _this.render(holder, (_this.page * 5) - 5, data);
+                    _this.paginator.style.visibility = "hidden";
                 } else {
                     _this.render(holder, (_this.page * 5) - 5);
+                    _this.paginator.style.visibility = "visible";
                 }
             };
         };
@@ -321,6 +347,7 @@ var FleetManagement;
         };
         Main.dataset = document.getElementById("dataset");
         Main.search = document.getElementById("search");
+        Main.paginator = document.getElementById("paginator");
         Main.placeholder = {
             volkswagen: "http://img1.wikia.nocookie.net/__cb20131206125409/logopedia/images/9/9f/Volkswagen56.png",
             ford: "http://seeklogo.com/images/F/Ford-logo-FAE532D2CC-seeklogo.com.gif",

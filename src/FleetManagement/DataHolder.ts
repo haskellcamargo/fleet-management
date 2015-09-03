@@ -29,6 +29,14 @@ module FleetManagement {
     }
 
     /**
+     * Gives the size of the vehicles list
+     * @return number
+     */
+    public getSize(): number {
+      return this.vehicles.length;
+    }
+
+    /**
      * Returns the list of vehicles.
      * @author Marcelo Camargo
      * @return Array<IVehicle>
