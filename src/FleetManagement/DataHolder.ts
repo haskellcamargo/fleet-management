@@ -54,13 +54,9 @@ module FleetManagement {
      * @return void
      */
     public addVehicle(vehicle: IVehicle): void {
-      try {
-        this.validateVehicle(vehicle);
-        this.plateList.push(vehicle.plate);
-        this.vehicles.push(vehicle);
-      } catch (e) {
-        console.log(e);
-      }
+      this.validateVehicle(vehicle);
+      this.plateList.push(vehicle.plate);
+      this.vehicles.push(vehicle);
     }
 
     /**
@@ -116,7 +112,11 @@ module FleetManagement {
       vehicle: IVehicle,
       validatePlate: boolean = true
     ): void {
-      if (validatePlate && this.plateList.indexOf(vehicle.plate)) {
+      if (validatePlate && vehicle.plate.trim() === "") {
+        throw new Error("Plate is obligatory");
+      }
+
+      if (validatePlate && this.plateList.indexOf(vehicle.plate) !== -1) {
         throw new Error("There is already a vehicle with the same plate");
       }
 

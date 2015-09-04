@@ -3,13 +3,16 @@ body {
   font-family: "open sans", "segoe ui";
 }
 body .search-area {
-  margin-top: 50px;
+  padding-top: 100px;
 }
 body .heart {
   color: #E74C3C;
 }
 body a {
   color: #22A7F0;
+}
+body .creation-area {
+  margin-top: 20px;
 }
 body #dataset {
   margin-top: 20px;

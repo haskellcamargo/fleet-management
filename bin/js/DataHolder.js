@@ -52,13 +52,9 @@ var FleetManagement;
         * @return void
         */
         DataHolder.prototype.addVehicle = function (vehicle) {
-            try  {
-                this.validateVehicle(vehicle);
-                this.plateList.push(vehicle.plate);
-                this.vehicles.push(vehicle);
-            } catch (e) {
-                console.log(e);
-            }
+            this.validateVehicle(vehicle);
+            this.plateList.push(vehicle.plate);
+            this.vehicles.push(vehicle);
         };
 
         /**
@@ -110,7 +106,11 @@ var FleetManagement;
         */
         DataHolder.prototype.validateVehicle = function (vehicle, validatePlate) {
             if (typeof validatePlate === "undefined") { validatePlate = true; }
-            if (validatePlate && this.plateList.indexOf(vehicle.plate)) {
+            if (validatePlate && vehicle.plate.trim() === "") {
+                throw new Error("Plate is obligatory");
+            }
+
+            if (validatePlate && this.plateList.indexOf(vehicle.plate) !== -1) {
                 throw new Error("There is already a vehicle with the same plate");
             }
 

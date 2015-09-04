@@ -17,7 +17,53 @@ var FleetManagement;
             var holder = new FleetManagement.DataHolder;
             this.render(holder);
             this.bindSearch(holder);
+            this.bindCreator(holder);
             this.renderPaginator(holder);
+        };
+
+        /**
+        * Adds a new vehicle to the stack.
+        * @author Marcelo Camargo
+        * @param holder: DataHolder
+        * @return void
+        */
+        Main.bindCreator = function (holder) {
+            var _this = this;
+            var field = {
+                plate: document.getElementById("field-plate"),
+                fuel: document.getElementById("field-fuel"),
+                model: document.getElementById("field-model"),
+                trademark: document.getElementById("field-trademark"),
+                image: document.getElementById("field-image")
+            };
+
+            document.getElementById("btn-add").onclick = function (e) {
+                try  {
+                    holder.addVehicle({
+                        plate: field.plate.value,
+                        fuel: (function () {
+                            switch (field.fuel.value) {
+                                case "Alcohol":
+                                    return 1 /* Alcohol */;
+                                case "Gas":
+                                    return 0 /* Gas */;
+                                default:
+                                    return 2 /* Flex */;
+                            }
+                        })(),
+                        model: field.model.value,
+                        trademark: field.trademark.value,
+                        image: field.image.value.trim() === "" ? null : field.image.value
+                    });
+                    field.plate.value = "";
+                    field.model.value = "";
+                    field.image.vaue = "";
+                    _this.render(holder, 0);
+                    _this.renderPaginator(holder);
+                } catch (e) {
+                    alert(e.message);
+                }
+            };
         };
 
         /**
@@ -33,13 +79,15 @@ var FleetManagement;
 
             this.paginator.innerHTML = "";
             for (var i = 0; i < pagesNumber; i++) {
-                var pager = document.createElement("button");
-                pager.className = "btn btn-default";
-                pager.innerHTML = (i + 1).toString();
-                pager.onclick = function () {
-                    _this.render(holder, (i * 5) - 5);
-                };
-                this.paginator.appendChild(pager);
+                this.paginator.appendChild((function () {
+                    var p = document.createElement("button");
+                    p.className = "btn btn-default";
+                    p.innerHTML = i.toString();
+                    p.onclick = function () {
+                        _this.render(holder, parseInt(p.innerHTML) * 5);
+                    };
+                    return p;
+                })());
             }
         };
 
@@ -57,10 +105,10 @@ var FleetManagement;
                     var data = holder.getVehicles().filter(function (vehicle) {
                         return Main.getFuelName(vehicle.fuel).toLowerCase().indexOf(content) !== -1 || vehicle.model.toLowerCase().indexOf(content) !== -1 || vehicle.plate.toLowerCase().indexOf(content) !== -1 || vehicle.trademark.toLowerCase().indexOf(content) !== -1;
                     });
-                    _this.render(holder, (_this.page * 5) - 5, data);
+                    _this.render(holder, 0, data);
                     _this.paginator.style.visibility = "hidden";
                 } else {
-                    _this.render(holder, (_this.page * 5) - 5);
+                    _this.render(holder);
                     _this.paginator.style.visibility = "visible";
                 }
             };
@@ -77,6 +125,7 @@ var FleetManagement;
         Main.render = function (holder, from, searchData) {
             var _this = this;
             if (typeof from === "undefined") { from = 0; }
+            console.log(from);
             var data = searchData ? searchData : holder.getVehicles().slice(from, from + 5);
 
             this.dataset.innerHTML = "";
@@ -283,7 +332,7 @@ var FleetManagement;
 
             button.onclick = function () {
                 holder.removeVehicleByPlate(vehicle.plate);
-                Main.render(holder, (Main.page * 5) - 5);
+                Main.render(holder);
             };
 
             td.appendChild(button);
@@ -362,7 +411,6 @@ var FleetManagement;
             ford: "http://seeklogo.com/images/F/Ford-logo-FAE532D2CC-seeklogo.com.gif",
             fiat: "http://s3.caradvice.com.au/wp-content/themes/caradvice/assets/img/showroom/fiat.png"
         };
-        Main.page = 1;
         return Main;
     })();
     FleetManagement.Main = Main;

@@ -22,7 +22,29 @@
       <div class="row vertical-center-row">
         <div class="col-lg-12">
           <div class="row ">
+            <div class="creation-area col-xs-12" align="center">
+              <div class="col-xs-5" />
+                <input type="text" id="field-plate" class="form-control" placeholder="Plate" />
+                <select id="field-fuel" class="form-control">
+                  <option value="Alcohol">Alcohol</option>
+                  <option value="Gas">Gas</option>
+                  <option value="Flex">Flex</option>
+                </select>
+                <input type="text" class="form-control" id="field-image" placeholder="Image" />
+              </div>
+              <div class="col-xs-5">
+                <input type="text" class="form-control" id="field-model" placeholder="Model" />
+                <select id="field-trademark" class="form-control">
+                  <option value="Volkswagen">Volkswagen</option>
+                  <option value="Ford">Ford</option>
+                  <option value="Fiat">Fiat</option>
+                </select>
+                <button class="btn btn-success" id="btn-add">Add</button>
+              </div>
+            </div>
+
             <div class="search-area">
+              <br /><br /> <!-- Forgive me by these <br />! -->
               <input class="form-control" id="search" placeholder="Search" />
             </div>
 
